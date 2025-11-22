@@ -1,0 +1,68 @@
+//Marion county patents - Exponental
+
+gen T = _n + 246
+tsset T, monthly
+ren var2 patents
+
+gen F_exp= 12 in 1
+replace F_exp= (L.patents*.3) + (L.F_exp*.7) in 2/L
+
+tssmooth exponential F_exp2= patents, parms(0.3) s0(12)
+
+tssmooth dexponential F_dexp2= patents, parms(0.3) s0(12 12)
+
+gen F_dexp= 12 in 1
+replace F_dexp= (F_exp*.3) + (L.F_dexp*.7) in 2/L
+
+tssmooth hwinters F_hw= patents, parms(0.3 0.1) s0(12 0)
+
+tssmooth hwinters F_hw= patents, parms(0.3 0.1) s0(12 0) forecast(2)
+
+tssmooth hwinters F_hw2= patents,  s0(12 0) forecast(2)
+
+
+//Natural Gas - Seasonal Decomposition
+
+gen T = _n + 37*4 - 1
+tsset T, quarterly
+tssmooth ma sma1= gascons, window (2,1,1)
+tssmooth ma sma2= gascons, window (1,1,2)
+gen sma= (sma1 + sma2)/2 in 3/45
+
+gen deseasn= gascons - sma
+gen rat = gascon/sma
+
+su deseasn if q1==1, detail
+su deseasn if q2==1, detail
+su deseasn if q3==1, detail
+su deseasn if q4==1, detail
+
+gen meds =  1136.35*q1 - 472.1063*q2 - 846.2499  *q3 + 217.175*q4
+di (1136.35 - 472.1063 - 846.2499  + 217.175)/4
+replace meds = meds - 8.7922
+
+su rat if q1==1, detail
+su rat if q2==1, detail
+su rat if q3==1, detail
+su rat if q4==1, detail
+
+gen meds2 =  1.994802*q1 + .5632836*q2 + .2846274 *q3 + 1.177272*q4
+di (1.994802*.5632836*.2846274*1.177272)^(0.25)
+replace meds2=meds2/.78333062
+
+gen dss= gascons - meds
+gen dss2= gascons / meds2
+
+tssmooth exponential exp2=dss2, parms(.1) s0(970.209) forecast(4)
+tssmooth exponential exp=dss, parms(.1) s0(1334.35) forecast(4)
+
+tsline exp exp2 gascons
+
+replace meds=L4.meds in 48/L
+replace meds2=L4.meds2 in 48/L
+
+gen final = exp + meds
+gen final2 = exp2*meds2
+
+tsline final final2 gascons
+
