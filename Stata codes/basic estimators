@@ -1,0 +1,42 @@
+gen Fnaive=Y[_n -1]
+gen FSnaive=Y[_n -4]
+gen Favg=Y[_n -1] in 2
+replace Favg= (Y[_n -1] + ((_n -2))*Favg[_n -1])/(_n -1) in 3/L
+gen Fdrift=Y[_n -1] + ((Y[_n -1] - Y[1])/(_n -2)) in 3/L
+gen Fdrift = (Y[_n -1] + Y[_n -2] + Y[_n -3] + Y[_n -4])/4
+tssmooth ma FMA40=Y , window(4 0 0)
+
+
+gen eNaive= Y - Fnaive
+gen eSNaive = Y - FSnaive
+gen eAvg = Y - Favg
+gen eDrift= Y - Fdrift
+gen eMA4 = Y - Fdrift
+
+gen aeNaive= abs(eNaive)
+gen aeSNaive = abs(eSNaive)
+gen aeAvg = abs(eAvg)
+gen aeDrift= abs(eDrift)
+gen aeMA4 = abs(eMA4)
+
+gen seNaive= (eNaive)^2
+gen seSNaive = (eSNaive)^2
+gen seAvg = (eAvg)^2
+gen seDrift= (eDrift)^2
+gen seMA4 = (eMA4)^2
+
+
+tssmooth exponential exp1=Y, parms(0.1) s0(66400)
+tssmooth exponential exp2=Y, parms(0.9) s0(66400)
+tssmooth exponential exp3=Y, s0(66400)
+
+tssmooth dexponential sm2= Y
+tssmooth hwinters sm3= Y
+
+tssmooth exponential sm1=Y, forecast(12)
+tssmooth dexponential sm2=Y, forecast(12)
+tssmooth hwinters sm3= Y, forecast(12)
+
+
+
+
