@@ -1,0 +1,1 @@
+* paste your Stata econometric code here
