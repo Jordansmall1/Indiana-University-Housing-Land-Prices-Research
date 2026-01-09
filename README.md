@@ -70,7 +70,7 @@ An **ARIMA(1,1,1)** model was estimated to generate a 24‑month forecast.
 
 ## 📉 Forecast Results
 
-![Housing Forecast](visuals/Forecast1.png)
+![Housing Forecast](visuals/[Forecast1.png](https://github.com/Jordansmall1/Indiana-University-Housing-Land-Prices-Research/blob/main/visuals/Forecast%201.png))
 
 ---
 
