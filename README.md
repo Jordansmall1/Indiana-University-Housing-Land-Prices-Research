@@ -70,7 +70,7 @@ An **ARIMA(1,1,1)** model was estimated to generate a 24‑month forecast.
 
 ## 📉 Forecast Results
 
-![Housing Forecast](visuals/housing_forecast.png)
+![Housing Forecast](visuals/Forecast 1.png)
 
 ---
 
