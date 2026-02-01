@@ -3,178 +3,197 @@
 
 ---
 
-## 1. Motivation & Research Question
+## Overview
 
-Traditional macroeconomic indicators such as GDP, unemployment, inflation, and interest rates are commonly used to assess the health of the U.S. economy. However, economic theory and empirical research emphasize that **land values play a central role in business cycles, speculative booms, and financial instability**.
+This project studies whether **U.S. housing prices**, used as a proxy for **land values**, can act as a benchmark and early indicator for broader macroeconomic conditions.
 
-Because direct land price data are limited, this project uses **housing prices as a proxy for land values**. The land component of housing prices captures speculative behavior and cyclical dynamics that often precede broader macroeconomic downturns. Prior research (e.g., Deaton; Hirano & Stiglitz) highlights the destabilizing role of land speculation in economic fluctuations.
+Economic theory and prior research emphasize that land prices play a central role in speculative cycles, asset bubbles, and financial instability. Because direct land price data are limited, housing prices are used to capture the land component embedded in property markets.
 
-**Research Question**  
-> Can housing prices (as a proxy for land values) serve as a benchmark and predictive indicator for U.S. macroeconomic conditions?
-
-To answer this, the project combines econometric modeling, time-series diagnostics, and multiple forecasting methodologies.
-
----
-
-## 2. Repository Structure
-
-- **data/**: cleaned macroeconomic dataset (1982–2024)  
-- **visuals/**: all figures embedded below  
-- **code/**: fully reproducible Stata analysis  
-- **slides/**: presentation with theory, diagnostics, and results  
-- **paper/**: full econometric research paper  
+The project combines:
+- Econometric modeling
+- Time-series diagnostics
+- Multiple forecasting techniques
+- Confidence-interval-based projections
 
 ---
 
-## 3. Data & Preparation
+## Research Question
 
-Data were compiled from FRED covering **1982–2024**. Variables were inflation-adjusted where appropriate.
-
-Preparation steps:
-- Parsed dates into time-series format  
-- Removed redundant and unnamed columns  
-- Selected core variables:
-  - Median house price (proxy for land price)
-  - Real GDP
-  - Real disposable income
-  - Unemployment rate
-  - Inflation
-  - 10-year real interest rate
-- Dropped missing observations and sorted chronologically  
-
-Final dataset:  
-`data/housing_clean.csv`
+**Can housing prices (as a proxy for land values) help explain and predict U.S. macroeconomic conditions?**
 
 ---
 
-## 4. Exploratory Data Analysis
+## Repository Structure
+
+housing-land-price-forecast/
+├── data/ → cleaned dataset
+├── visuals/ → figures used in this README
+│ ├── eda/
+│ ├── diagnostics/
+│ └── forecasts/
+├── code/ → reproducible Stata analysis
+├── slides/ → full presentation
+└── paper/ → full written research paper
+
+---
+
+## Data
+
+- Source: **FRED**
+- Time period: **1982–2024**
+- Dataset: `data/housing_clean.csv`
+
+### Key Variables
+- Median house price (proxy for land value)
+- Real GDP
+- Real disposable income
+- Unemployment rate
+- Inflation
+- 10-year real interest rate
+
+### MODEL 
+- LandPrice_t = β₀
++ β₁ · GDP_t
++ β₂ · InterestRate_t
++ β₃ · Income_t
++ β₄ · Inflation_t
++ β₅ · Unemployment_t
++ ε_t
+
+### Preparation Steps
+- Parsed dates into time-series format
+- Removed redundant and unnamed columns
+- Adjusted variables for inflation where appropriate
+- Dropped missing observations
+- Sorted data chronologically
+
+---
+
+## Exploratory Data Analysis
 
 ### Median House Prices Over Time
-![Median House Prices](visuals/housing_prices.png)
+![Median House Prices](visuals/eda/housing_prices.png)
 
-Housing prices display a strong long-run upward trend with pronounced cyclical behavior, consistent with speculative dynamics and macroeconomic expansions and contractions.
+Housing prices show a strong long-run upward trend with clear cyclical movements. These cycles align with macroeconomic expansions, contractions, and speculative periods.
 
 ---
 
 ### Interest Rates vs. Housing Prices
-![Interest Rates vs Housing Prices](visuals/ir_vs_prices.png)
+![Interest Rates vs Housing Prices](visuals/eda/ir_vs_prices.png)
 
-A clear **negative relationship** exists between real interest rates and housing prices. Higher borrowing costs reduce housing demand and asset valuations, aligning with macroeconomic theory.
-
----
-
-## 5. Econometric Model Specification
-
-The baseline econometric model treats **housing (land) prices as the endogenous variable**, explained by macroeconomic fundamentals:
-
-\[
-\text{Land Price}_t =
-\beta_0 +
-\beta_1 \text{GDP}_t +
-\beta_2 \text{Interest Rate}_t +
-\beta_3 \text{Income}_t +
-\beta_4 \text{Inflation}_t +
-\beta_5 \text{Unemployment}_t +
-\varepsilon_t
-\]
-
-- Endogenous variable: housing / land price  
-- Exogenous variables: GDP, interest rate, income, inflation, unemployment  
-- ε: unobserved economic shocks  
-
-An initial OLS regression produced a high R² (~0.95), but stationarity tests indicated this was driven by shared trends rather than causal relationships.
+There is a clear **negative relationship** between real interest rates and housing prices. Higher borrowing costs reduce housing demand and asset valuations, consistent with macroeconomic theory.
 
 ---
 
-## 6. Time-Series Diagnostics
+## Econometric Model
+
+The baseline model treats **housing prices as the endogenous variable**, explained by key macroeconomic fundamentals.
+
+### Model Specification
+
+
+### Variable Definitions
+- **LandPrice_t**: Median housing price (proxy for land value)
+- **GDP_t**: Real GDP
+- **InterestRate_t**: 10-year real interest rate
+- **Income_t**: Real disposable income
+- **Inflation_t**: Inflation rate
+- **Unemployment_t**: Unemployment rate
+- **ε_t**: Unobserved economic shocks
+
+An initial OLS regression produced a high R², but stationarity concerns motivated a shift to time-series methods.
+
+---
+
+## Time-Series Diagnostics
 
 ### Partial Autocorrelation Function (PACF)
-![PACF](visuals/pacf.png)
+![PACF](visuals/diagnostics/pacf.png)
 
-A strong spike at lag 1 indicates significant dependence on the previous period, supporting an autoregressive structure.
+A strong spike at lag 1 indicates that housing prices depend heavily on their previous value, supporting an autoregressive structure.
 
 ---
 
 ### Autocorrelation Function (ACF)
-![ACF](visuals/acf.png)
+![ACF](visuals/diagnostics/acf.png)
 
 Gradual decay across lags suggests strong persistence and motivates ARIMA-type modeling.
 
 ---
 
-## 7. Residual Diagnostics
-![Residuals](visuals/residuals.png)
+## Residual Diagnostics
+![Residuals](visuals/diagnostics/residuals.png)
 
-Residuals appear approximately normally distributed with no visible heteroskedasticity, supporting model assumptions.
-
----
-
-## 8. Forecasting Methodology
-
-Multiple forecasting approaches were evaluated:
-
-- Naive and seasonal naive benchmarks  
-- Double exponential smoothing (centered moving averages)  
-- Holt-Winters additive models (level and log-transformed)  
-- ARIMA-based forecasting  
-
-Naive models provide baselines, while smoothing and ARIMA methods better capture trend persistence and uncertainty.
+Residuals are approximately normally distributed with no visible heteroskedasticity, supporting the validity of the model assumptions.
 
 ---
 
-## 9. Forecast Results
+## Forecasting Methods
+
+Several forecasting approaches were evaluated:
+
+- Naive and seasonal naive benchmarks
+- Double exponential smoothing
+- Holt-Winters additive models
+- ARIMA-based forecasting
+
+Naive models serve as baselines, while smoothing and ARIMA models better capture trend persistence and uncertainty.
+
+---
+
+## Forecast Results
 
 ### ARIMA 24-Month Forecast
-![ARIMA Forecast](visuals/housing_forecast.png)
+![ARIMA Forecast](visuals/forecasts/housing_forecast.png)
 
 ---
 
 ### 95% Confidence Interval Forecast
-![Confidence Interval Forecast](visuals/forecast_ci.png)
+![Confidence Interval Forecast](visuals/forecasts/forecast_ci.png)
+
+The forecast shows continued price persistence with widening confidence bands, reflecting increasing uncertainty over time.
 
 ---
 
 ### Double Exponential Smoothing
-![Double Exponential Smoothing](visuals/double_exp.png)
+![Double Exponential Smoothing](visuals/forecasts/double_exp.png)
 
 ---
 
 ### Holt-Winters Additive
-![Holt-Winters Additive](visuals/holt_winters.png)
+![Holt-Winters Additive](visuals/forecasts/holt_winters.png)
 
-Log-transformed Holt-Winters models yield smoother and more interpretable long-run trends.
-
----
-
-## 10. Code & Reproducibility
-
-All analysis is fully reproducible in Stata:
-
-`code/stata/forecasting_models.do`
-
-Includes:
-- Naive and seasonal naive forecasts  
-- Double exponential smoothing  
-- Holt-Winters additive models  
-- ARIMA(1,1,1) estimation  
-- Residual diagnostics  
+Log-transformed Holt-Winters models provide smoother long-run trend estimates.
 
 ---
 
-## 11. Key Findings & Implications
+## Code & Reproducibility
 
-- Housing prices capture speculative dynamics not fully reflected in traditional indicators  
-- Real GDP and interest rates are statistically significant predictors  
-- Housing (land) prices can act as **early warning signals** for macroeconomic downturns  
-- Monitoring housing prices may improve forecasting and policy design  
+All analysis and forecasting are fully reproducible in Stata:
+
+
+The script includes:
+- Naive forecasts
+- Double exponential smoothing
+- Holt-Winters additive models
+- ARIMA(1,1,1) estimation
+- Residual diagnostics
 
 ---
 
-## 12. Authors
+## Key Takeaways
+
+- Housing prices capture speculative dynamics not fully reflected in traditional indicators
+- Interest rates and GDP are key drivers of housing price movements
+- Housing (land) prices may act as **early warning signals** for macroeconomic downturns
+- Time-series methods are essential when working with non-stationary macro data
+
+---
+
+## Authors
 
 **Jordan Small**  
 Alan Zaragoza  
 Eric Reingardt  
 
 Indiana University Indianapolis
-
