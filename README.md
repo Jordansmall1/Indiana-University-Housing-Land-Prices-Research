@@ -29,7 +29,7 @@ Housing prices are treated as the endogenous variable and explained by key macro
 
 ### Model Specification
 
-LandPrice_t = β₀ + β₁ · GDP_t + β₂ · InterestRate_t + β₃ · Income_t + β₄ · Inflation_t + β₅ · Unemployment_t + ε_t
+**LandPrice_t = β₀ + β₁ · GDP_t + β₂ · InterestRate_t + β₃ · Income_t + β₄ · Inflation_t + β₅ · Unemployment_t + ε_t**
 
 Where:
 - **LandPrice_t**: Median housing price (proxy for land value)
